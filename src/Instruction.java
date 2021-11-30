@@ -1,73 +1,56 @@
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 
-public class Instruction extends Format {
-	String label;
-	String assemblyLine;
+public class Instruction {
+	private static final Map<String, String> CONDITIONAL = new HashMap<String, String>() {{
+		put("0000", "EQ");
+		put("0001", "NE");
+		put("0010", "HS");
+		put("0011", "LO");
+		put("0100", "MI");
+		put("0101", "PL");
+		put("0110", "VS");
+		put("0111", "VC");
+		put("1000", "HI");
+		put("1001", "LS");
+		put("1010", "GE");
+		put("1011", "LT");
+		put("1100", "GT");
+		put("1101", "LE");
+	}};
 
-	/**
-	 * The normal assembly instruction as deciphered from the given binary string
-	 *
-	 * @param format       the format that corresponds to this instruction
-	 * @param assemblyLine the binary string that defines the assembly
-	 */
-	public Instruction(Format format, String assemblyLine) {
-		super(format.opcode, format.name, format.format);
-		this.assemblyLine = assemblyLine.trim();
+	public String opcode;
+	public String name;
+	public String format;
+
+	private Instruction(String opcode, String name, String format) {
+		this.opcode = opcode;
+		this.name = name;
+		this.format = format;
 	}
 
-	/**
-	 * Performs a check on each instruction for branch instructions and retroactively updates the branching destinations with labels.
-	 * @param assemblyInstructions the instructions to parse through
-	 */
-	protected static void labelInstructions(ArrayList<Instruction> assemblyInstructions) {
-		for (int idx = 0; idx < assemblyInstructions.size(); idx++) {
-			Instruction instruction = assemblyInstructions.get(idx);
-			if (instruction.format.equals("B") || instruction.format.equals("CB")) {
-				int beginIndex;
-				switch (instruction.name) {
-					case "B" -> {
-						beginIndex = 2;
-						updateLabels(assemblyInstructions, idx, instruction, beginIndex);
-					}
-					case "BL" -> {
-						beginIndex = 3;
-						updateLabels(assemblyInstructions, idx, instruction, beginIndex);
-					}
-					case "B." -> {
-						beginIndex = 5;
-						updateLabels(assemblyInstructions, idx, instruction, beginIndex);
-					}
-					case "CBZ", "CBNZ" -> {
-						beginIndex = instruction.assemblyLine.lastIndexOf(",") + 1;
-						updateLabels(assemblyInstructions, idx, instruction, beginIndex);
-					}
-				}
+	public static List<Instruction> loadInstructions() throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader("instructions"));
+		String line;
+		List<Instruction> instructionList = new ArrayList<>();
+		while ((line = br.readLine()) != null) {
+			if (line.startsWith("0") || line.startsWith("1")) {
+				String[] arr = line.split(",");
+				System.out.println(Arrays.toString(arr));
+				instructionList.add(new Instruction(arr[0], arr[1], arr[2]));
 			}
 		}
-	}
-
-	private static void updateLabels(ArrayList<Instruction> assemblyInstructions, int idx, Instruction i, int beginIndex) {
-		String identifier;
-		int offset;
-		identifier = i.assemblyLine.substring(beginIndex, i.assemblyLine.length() - 1).trim();
-		offset = Integer.parseInt(identifier);
-		if (assemblyInstructions.get(idx + offset).missingLabel()) assemblyInstructions.get(idx + offset).addLabel(
-				"label_" + (idx + offset));
-		assemblyInstructions.get(idx).assemblyLine =
-				assemblyInstructions.get(idx).assemblyLine.replace(identifier, assemblyInstructions.get(idx + offset).label);
-	}
-
-	public void addLabel(String label) {
-		this.label = label;
-	}
-
-	public boolean missingLabel() {
-		return label == null || label.isEmpty();
+		return instructionList;
 	}
 
 	@Override
 	public String toString() {
-		if (missingLabel()) return assemblyLine;
-		return label + ": " + assemblyLine;
+		return "Instruction{" +
+				"opcode='" + opcode + '\'' +
+				", name='" + name + '\'' +
+				", format='" + format + '\'' +
+				'}';
 	}
 }

@@ -18,7 +18,6 @@
 * The program must print out its contents into the terminal.
 
 ## Need
-* ~~A way to read every 4 bytes of a file in binary.~~
-* ~~A dictionary/lookup table/index to reference when converting from binary to assembly.~~
-* A class that encapsulates instructions details and the string representation of them.
+* A way to read every 4 bytes of a file in binary.
+* A dictionary/lookup table/index to reference when converting from binary to assembly.
 * A labeling algorithm.
