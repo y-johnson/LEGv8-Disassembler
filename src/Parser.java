@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Parser {
 
 	public static void main(String[] args) throws IOException {
-		readLinesFromFile("C:\\Users\\yjohn\\Desktop\\instructions.legv8asm.machine");
-		System.out.println(Instruction.loadInstructions());
+		for (byte[] b : Objects.requireNonNull(readLinesFromFile("C:\\Users\\yjohn\\Desktop\\instructions.legv8asm.machine"))) {
+			Main.translate(b);
+		}
 	}
 
 
@@ -19,10 +21,7 @@ public class Parser {
 			List<byte[]> byteList = new ArrayList<>();
 			byte[] buffer = new byte[4];
 			while (is.read(buffer) != -1) {
-				for (byte b : buffer) {
-					String s1 = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
-					System.out.print(s1 + " ");
-				}
+				arrayToBinary(buffer);
 				System.out.println();
 				byteList.add(buffer.clone());
 			}
@@ -33,5 +32,20 @@ public class Parser {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static String[] arrayToBinary(byte[] buffer) {
+		String[] arr = new String[4];
+		int i=0;
+		String s;
+		for (byte b : buffer) {
+			s = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
+			arr[i] = s;
+//			System.out.print(s + " ");
+			++i;
+			i = i %4;
+		}
+		return arr;
+
 	}
 }

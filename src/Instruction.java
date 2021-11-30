@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class Instruction {
-	private static final Map<String, String> CONDITIONAL = new HashMap<String, String>() {{
+	public static final Map<String, String> CONDITIONAL = new HashMap<String, String>() {{
 		put("0000", "EQ");
 		put("0001", "NE");
 		put("0010", "HS");
@@ -20,6 +20,15 @@ public class Instruction {
 		put("1100", "GT");
 		put("1101", "LE");
 	}};
+	public static List<Instruction> INSTRUCTION_LIST = null;
+
+	static {
+		try {
+			INSTRUCTION_LIST = loadInstructions();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public String opcode;
 	public String name;
