@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class Instruction {
-	public static final Map<String, String> CONDITIONAL = new HashMap<String, String>() {{
+	static List<Instruction> INSTRUCTION_LIST = null;
+	static Map<String, String> CONDITIONAL = new HashMap<String, String>() {{
 		put("0000", "EQ");
 		put("0001", "NE");
 		put("0010", "HS");
@@ -20,11 +21,10 @@ public class Instruction {
 		put("1100", "GT");
 		put("1101", "LE");
 	}};
-	public static List<Instruction> INSTRUCTION_LIST = null;
 
 	static {
 		try {
-			INSTRUCTION_LIST = loadInstructions();
+			INSTRUCTION_LIST = Instruction.loadInstructions();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -34,20 +34,19 @@ public class Instruction {
 	public String name;
 	public String format;
 
-	private Instruction(String opcode, String name, String format) {
+	public Instruction(String opcode, String name, String format) {
 		this.opcode = opcode;
 		this.name = name;
 		this.format = format;
 	}
 
-	public static List<Instruction> loadInstructions() throws IOException {
+	static List<Instruction> loadInstructions() throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("instructions"));
 		String line;
 		List<Instruction> instructionList = new ArrayList<>();
 		while ((line = br.readLine()) != null) {
 			if (line.startsWith("0") || line.startsWith("1")) {
 				String[] arr = line.split(",");
-				System.out.println(Arrays.toString(arr));
 				instructionList.add(new Instruction(arr[0], arr[1], arr[2]));
 			}
 		}
