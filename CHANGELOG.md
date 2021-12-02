@@ -1,6 +1,17 @@
 # Changelog
 
-### 12/1/2021 23:52
+### 12/1/2021 18:38
+
+Added labeling.
+
+* The implementation currently labels either forward or backwards with the ability to change numbered offsets into the
+  label name.
+
+The program now passes the first argument as a filename.
+
+Miscellaneous refactoring.
+
+### 12/1/2021 13:52
 
 Added proper binary to String parsing for all required instruction types.
 
