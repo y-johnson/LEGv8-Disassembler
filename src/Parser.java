@@ -14,7 +14,7 @@ public class Parser {
 			lineBuilder.append(s);
 		}
 		String line = lineBuilder.toString();
-		for (BaseInstruction i : BaseInstruction.baseInstructionList) {
+		for (Format i : Format.getBaseInstructionList()) {
 			Instruction assemblyFromBinary = getAssemblyFromBinary(line, i);
 			if (assemblyFromBinary != null) return assemblyFromBinary;
 		}
@@ -35,9 +35,9 @@ public class Parser {
 
 	}
 
-	private static Instruction getAssemblyFromBinary(String line, BaseInstruction i) {
+	private static Instruction getAssemblyFromBinary(String line, Format i) {
 		String output = "Disassembly error!";
-		BaseInstruction match = null;
+		Format match = null;
 		switch (i.format) {
 			case "R":
 				// 0-10 opcode
@@ -52,35 +52,24 @@ public class Parser {
 					String Rn = line.substring(22, 27);
 					String Rd = line.substring(27);
 
-					switch (i.name) {
-						case "LSL":
-						case "LSR":
-							output = String.format(
-									"%s X%d, X%d, #%d;",
-									i.name,
-									Integer.parseInt(Rd, 2),
-									Integer.parseInt(Rn, 2),
-									Integer.parseUnsignedInt(shamt, 2)
-							);
-							break;
-						case "PRNL":
-						case "DUMP":
-						case "HALT":
-							output = String.format("%s;", i.name);
-							break;
-						case "PRNT":
-							output = String.format("%s X%d;", i.name, Integer.parseInt(Rd, 2));
-							break;
-						default:
-							output = String.format(
-									"%s X%d, X%d, X%d;",
-									i.name,
-									Integer.parseInt(Rd, 2),
-									Integer.parseInt(Rn, 2),
-									Integer.parseInt(Rm, 2)
-							);
-							break;
-					}
+					output = switch (i.name) {
+						case "LSL", "LSR" -> String.format(
+								"%s X%d, X%d, #%d;",
+								i.name,
+								Integer.parseInt(Rd, 2),
+								Integer.parseInt(Rn, 2),
+								Integer.parseUnsignedInt(shamt, 2)
+						);
+						case "PRNL", "DUMP", "HALT" -> String.format("%s;", i.name);
+						case "PRNT" -> String.format("%s X%d;", i.name, Integer.parseInt(Rd, 2));
+						default -> String.format(
+								"%s X%d, X%d, X%d;",
+								i.name,
+								Integer.parseInt(Rd, 2),
+								Integer.parseInt(Rn, 2),
+								Integer.parseInt(Rm, 2)
+						);
+					};
 				}
 				break;
 			case "I":
@@ -115,7 +104,7 @@ public class Parser {
 				if (line.startsWith(i.opcode)) {
 					match = i;
 					String address = line.substring(11, 20);
-					String opcode2 = line.substring(20, 22);
+//					String opcode2 = line.substring(20, 22);
 					String Rn = line.substring(22, 27);
 					String Rd = line.substring(27);
 
@@ -126,7 +115,6 @@ public class Parser {
 							Integer.parseInt(Rn, 2),
 							address.startsWith("0") ? Integer.parseInt(address, 2) : "-" + (Integer.parseInt("1000000000000", 2) -
 									Integer.parseInt(address, 2))
-
 					);
 				}
 				break;
@@ -162,7 +150,7 @@ public class Parser {
 						output = String.format(
 								"%s%s %s;",
 								i.name,
-								BaseInstruction.CONDITIONAL.get(Rt.substring(1)),
+								Format.getConditionals().get(Rt.substring(1)),
 								conditionalString
 						);
 
