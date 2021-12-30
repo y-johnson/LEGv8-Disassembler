@@ -59,3 +59,11 @@ by [Dr. Jeremy Sheaffer](https://www.cs.iastate.edu/sheaffer).
 	> program. This is an R instruction. The opcode is 11111111110.
 > * HALT: This is an added instruction that triggers a DUMP and terminates the emulator. This is an R instruction. The
 	> opcode is 11111111111
+
+### Disclaimer
+
+The above code was authored by y-johnson (henceforth "I") for the purposes of a grade in Computer Science 321: "Computer
+Architecture" by Dr. Jeremy Sheaffer. It is provided for the explicit purpose of showcasing work. Usage of this code for
+any reason, especially that of a grade in the selfsame course, is not prohibited but not recommended due to academic
+dishonesty. I am in no way liable for any cases of plagiarism and dishonesty concerning academics and also do not
+guarantee proper functionality.
