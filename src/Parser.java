@@ -4,14 +4,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * @author y-johnson
+ */
 public class Parser {
-
-	public static void main(String[] args) throws IOException {
-		readLinesFromFile("C:\\Users\\yjohn\\Desktop\\instructions.legv8asm.machine");
-		System.out.println(Instruction.loadInstructions());
+	public static AssemblyInstruction translate(byte[] buffer) {
+		StringBuilder lineBuilder = new StringBuilder();
+		for (byte b : buffer) {
+			lineBuilder.append(getBinaryString(b));
+		}
+		String line = lineBuilder.toString();
+		for (InstructionFormat i : InstructionFormat.getBaseInstructionList()) {
+			try{
+				return new AssemblyInstruction(line, i);
+			} catch (NullPointerException ignored){}
+		}
+		return null;
 	}
-
 
 	public static List<byte[]> readLinesFromFile(String fileLocation) {
 		try {
@@ -19,11 +28,7 @@ public class Parser {
 			List<byte[]> byteList = new ArrayList<>();
 			byte[] buffer = new byte[4];
 			while (is.read(buffer) != -1) {
-				for (byte b : buffer) {
-					String s1 = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
-					System.out.print(s1 + " ");
-				}
-				System.out.println();
+				printBinaryBuffer(buffer);
 				byteList.add(buffer.clone());
 			}
 			return byteList;
@@ -33,5 +38,17 @@ public class Parser {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private static void printBinaryBuffer(byte[] buffer) {
+		for (byte b : buffer) {
+			String s1 = getBinaryString(b);
+			System.out.print(s1 + " ");
+		}
+		System.out.println();
+	}
+
+	private static String getBinaryString(byte b) {
+		return String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
 	}
 }
