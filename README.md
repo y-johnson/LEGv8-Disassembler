@@ -69,7 +69,7 @@ javac Main.java
 ```shell
 java Main $1
 ```
-...where `$1` refers to the file location of the instructions to parse. 
+...where `$1` refers to the file location of the machine code to parse. 
 #### Example
 > ```shell
 > java Main machine_code
